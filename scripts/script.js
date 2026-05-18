@@ -35,25 +35,45 @@ function lancerJeu() {
     // Initialisations
     let score = 0
     let i = 0
+    let listePropositions = listeMots
 
     let btnValiderMot = document.getElementById("btnValiderMot")
     let inputEcriture = document.getElementById("inputEcriture")
-    afficherProposition(listeMots[i])
+
+    afficherProposition(listePropositions[i])
+    
+    // Gestion de l'événement click sur le bouton "Valider"
     btnValiderMot.addEventListener("click", () => {
-        console.log(inputEcriture.value)
-        if (inputEcriture.value === listeMots[i]) {
+        if (inputEcriture.value === listePropositions[i]) {
             score++
         }
         i++
         afficherResultat(score, i)
         inputEcriture.value = ""
-        if (listeMots[i] === undefined) {
+        if (listePropositions[i] === undefined) {
             afficherProposition("Le jeu est fini")
             btnValiderMot.disabled = true
         } else {
-            afficherProposition(listeMots[i])
+            afficherProposition(listePropositions[i])
         }
     })
+
+    // Gestion de l'événement change sur les boutons radios.
+    let listeBtnRadio = document.querySelectorAll(".optionSource input")
+    for (let j = 0; j < listeBtnRadio.length; j++) {
+        listeBtnRadio[j].addEventListener("change", (event) => {
+            /* Si c'est le premier élément qui a été modifié, alors nous voulons
+               jouer avec la listeMots. */
+            if (event.target.value === "1") {
+                listePropositions = listeMots
+            } else {
+                // Sinon nous voulons jouer avec la liste des phrases
+                listePropositions = listePhrases
+            }
+            // Et on modifie l'affichage en direct.
+            afficherProposition(listePropositions[i])
+        })
+    }
 
     afficherResultat(score, i)
 }

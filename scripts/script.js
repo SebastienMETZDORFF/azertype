@@ -39,6 +39,31 @@ function afficherEmail(nom, email, score) {
 }
 
 /**
+ * Cette fonction teste le champ "nom" du formulaire
+ * @param {string} nom : le nom du joueur 
+ * @returns un booléen qui indique que le nom est valide ou non
+ */
+function validerNom(nom) {
+    if (nom.length >= 2) {
+        return true
+    }
+    return false
+}
+
+/**
+ * Cette fonction teste le champ "email" du formulaire
+ * @param {string} email : l'email du joueur
+ * @returns un booléen qui indique que l'email est valide ou non
+ */
+function validerEmail(email) {
+    let emailRegExp = new RegExp("[a-z0-9._-]+@[a-z0-9._-]+\\.[a-z0-9._-]+")
+    if (emailRegExp.test(email)) {
+        return true
+    }
+    return false
+}
+
+/**
  * Cette fonction lance le jeu. 
  * Elle demande à l'utilisateur de choisir entre "mots" et "phrases" et lance la boucle de jeu correspondante
  */
@@ -100,8 +125,12 @@ function lancerJeu() {
         let baliseEmail = document.getElementById("email")
         let email = baliseEmail.value
 
-        let scoreEmail = `${score} / ${i}`
-
-        afficherEmail(nom, email, scoreEmail)
+        if (validerNom(nom) && validerEmail(email)) {
+            let scoreEmail = `${score} / ${i}`
+            afficherEmail(nom, email, scoreEmail)
+        } else {
+            console.log("Erreur : les champs du formulaire ne sont pas valides !")
+        }
+        
     })
 }

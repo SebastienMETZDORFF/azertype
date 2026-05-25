@@ -39,28 +39,62 @@ function afficherEmail(nom, email, score) {
 }
 
 /**
- * Cette fonction teste le champ "nom" du formulaire
- * @param {string} nom : le nom du joueur 
- * @returns un booléen qui indique que le nom est valide ou non
+ * Cette fonction lance une exception si le nom du joueur est trop court
+ * @param {string} nom : le nom du joueur
+ * @throws {Error}
  */
 function validerNom(nom) {
-    if (nom.length >= 2) {
-        return true
+    if (nom.length < 2) {
+        throw new Error("Le nom est trop court !")
     }
-    return false
 }
 
 /**
- * Cette fonction teste le champ "email" du formulaire
+ * Cette fonction lance une exception si l'email n'est pas valide
  * @param {string} email : l'email du joueur
- * @returns un booléen qui indique que l'email est valide ou non
+ * @throws {Error}
  */
 function validerEmail(email) {
     let emailRegExp = new RegExp("[a-z0-9._-]+@[a-z0-9._-]+\\.[a-z0-9._-]+")
-    if (emailRegExp.test(email)) {
-        return true
+    if (!emailRegExp.test(email)) {
+        throw new Error("L'email n'est pas valide !")
     }
-    return false
+}
+
+/**
+ * Cette fonction gère l'événement "submit" du formulaire
+ * @param {string} scoreEmail : le score à afficher dans l'email
+ */
+function gererFormulaire(scoreEmail) {
+    try {
+        let baliseNom = document.getElementById("nom")
+        let nom = baliseNom.value
+        validerNom(nom)
+
+        let baliseEmail = document.getElementById("email")
+        let email = baliseEmail.value
+        validerEmail(email)
+
+        afficherMessageErreur("")
+        afficherEmail(nom, email, scoreEmail)
+    } catch (error) {
+        afficherMessageErreur(error.message)
+    }
+}
+
+/**
+ * Cette fonction affiche le message d'erreur à la fin du formulaire
+ * @param {string} message : le message d'erreur 
+ */
+function afficherMessageErreur(message) {
+    let spanErreurMessage = document.getElementById("erreurMessage")
+    if (!spanErreurMessage) {
+        let popup = document.querySelector(".popup")
+        spanErreurMessage = document.createElement("span")
+        spanErreurMessage.id = "erreurMessage"
+        popup.append(spanErreurMessage)
+    }
+    spanErreurMessage.innerText = message
 }
 
 /**
@@ -112,25 +146,13 @@ function lancerJeu() {
         })
     }
 
-    afficherResultat(score, i)
-
-    // Gestion du formulaire de partage
+    // Gestion de l'événement submit sur le formulaire de partage. 
     let form = document.querySelector("form")
     form.addEventListener("submit", (event) => {
         event.preventDefault()
-
-        let baliseNom = document.getElementById("nom")
-        let nom = baliseNom.value
-
-        let baliseEmail = document.getElementById("email")
-        let email = baliseEmail.value
-
-        if (validerNom(nom) && validerEmail(email)) {
-            let scoreEmail = `${score} / ${i}`
-            afficherEmail(nom, email, scoreEmail)
-        } else {
-            console.log("Erreur : les champs du formulaire ne sont pas valides !")
-        }
-        
+        let scoreEmail = `${score} / ${i}`
+        gererFormulaire(scoreEmail)
     })
+
+    afficherResultat(score, i)
 }
